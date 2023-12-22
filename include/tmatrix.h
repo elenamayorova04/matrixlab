@@ -4,8 +4,6 @@
 #include <iostream>
 #include"tvector.h"
 
-using namespace std;
-
 template <class T>
 class TMatrix : public TVector<TVector<T>>
 {
