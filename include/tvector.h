@@ -16,13 +16,13 @@ public:
   TVector(TVector&& p);
   ~TVector();
 
-  TVector operator + (const TVector& p);
-  TVector operator - (const TVector& p);
+  TVector<T> operator + (const TVector& p);
+  TVector<T> operator - (const TVector& p);
   T operator * (const TVector& p);
 
-  TVector operator + (double a);
-  TVector operator - (double a);
-  TVector operator * (double a);
+  TVector<T> operator + (double a);
+  TVector<T> operator - (double a);
+  TVector<T> operator * (double a);
 
   TVector<T>& operator = (const TVector<T>& p);
   TVector<T> operator = (TVector<T>&& p);
@@ -34,6 +34,7 @@ public:
 
   void resize(int newSize = 1);
   int getSize();
+  T* getData();
 
   friend istream& operator >> (istream& in, const TVector& p)
   {
@@ -57,10 +58,15 @@ TVector<T>::TVector(const int _size)
 {
   if (_size < 0)
     throw "size";
+
   if (_size == 0)
     data = nullptr;
+
   size = _size;
   data = new T[size];
+
+  for (int i = 0; i < size; i++)
+    data[i] = 0;
 }
 
 template <class T> 
@@ -106,8 +112,10 @@ template <class T>
 TVector<T> TVector<T>::operator+(double a)
 {
   TVector<T> temp(size);
+
   for (int i = 0; i < size; i++)
     temp.data[i] = data[i] + a;
+
   return temp;
 }
 
@@ -116,16 +124,20 @@ template <class T>
 TVector<T> TVector<T>::operator-(double a)
 {
   TVector<T> temp(size);
+
   for (int i = 0; i < size; i++)
     temp.data[i] = data[i] - a;
+
   return temp;
 }
 
 template <class T> TVector<T> TVector<T>::operator*(double a)
 {
   TVector<T> temp(size);
+
   for (int i = 0; i < size; i++)
     temp.data[i] = data[i] * a;
+
   return temp;
 }
 
@@ -134,9 +146,12 @@ TVector<T> TVector<T>::operator + (const TVector<T>& p)
 {
   if (p.size != size)
     throw "size";
+
   TVector<T> res(size);
+
   for (int i = 0; i < size; i++)
     res.data[i] = data[i] + p.data[i];
+
   return res;
 }
 
@@ -145,9 +160,12 @@ TVector<T> TVector<T>::operator - (const TVector<T>& p)
 {
   if (p.size != size) 
     throw "size";
+
   TVector<T> res(size);
+
   for (int i = 0; i < size; i++)
     res.data[i] = data[i] - p.data[i];
+
   return res;
 }
 
@@ -156,9 +174,12 @@ T TVector<T>::operator * (const TVector<T>& p)
 {
   if (p.size != size) 
     throw "size";
+
   T res = 0;
+
   for (int i = 0; i < size; i++)
     res += data[i] * p.data[i];
+
   return res;
 }
 
@@ -167,14 +188,17 @@ TVector<T>& TVector<T>::operator = (const TVector<T>& p)
 {
   if (this == &p)
     return *this;
+
   if (size != p.size)
   {
     size = p.size;
     delete[] data;
     data = new T[size];
   }
+
   for (int i = 0; i < size; i++)
     data[i] = p.data[i];
+
   return *this;
 }
 
@@ -183,10 +207,12 @@ TVector<T> TVector<T>::operator = (TVector<T> &&p)
 {
   if (data != 0)
     delete [] data;
+
   data = p.data;
   size = p.size;
   p.data = nullptr;
   p.size = 0;
+
   return *this;
 }
 
@@ -195,9 +221,11 @@ bool TVector<T>::operator == (const TVector& p)
 {
   if (size != p.size) 
     return false;
+
   for (int i = 0; i < size; i++)
     if (data[i] != p.data[i]) 
       return false;
+
   return true;
 }
 
@@ -212,6 +240,7 @@ T& TVector<T>::operator[](int i)
 {
   if (i < 0 || i > size)
     throw "size";
+
   return data[i];
 }
 
@@ -220,10 +249,13 @@ void TVector<T>::resize(int newSize)
 {
   if (newSize <= 0) 
     throw "size";
+
   size = min(newSize, size);
   T* newData = new T[size];
+
   for (int i = 0; i < size; i++)
     newData[i] = data[i];
+
   delete[] data;
   data = newData;
 }
